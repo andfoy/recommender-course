@@ -49,9 +49,9 @@ W = np.random.normal(0, 0.1, numUsers*hidSize)
 W = W.reshape(numUsers, hidSize)
  
 for i in user.keys():
-moviesRat = [j.keys()[0]-1 for j in user[i]]
-ratings = [j.values()[0]-1 for j in user[i]]
-W_U = W[moviesRat, :]
-labels = np.zeros((K, len(moviesRat)))
-labels[ratings, moviesRat] = 1
+   moviesRat = [j.keys()[0]-1 for j in user[i]]
+   ratings = [j.values()[0]-1 for j in user[i]]
+   W_U = W[moviesRat, :]
+   labels = np.zeros((K, len(moviesRat)))
+   labels[ratings, moviesRat] = 1
 
