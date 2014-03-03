@@ -17,7 +17,7 @@ class RBM:
       self.W = weights
       self.randomness_source = np.random.rand(1, 7000000)
 
-   def logistic(z):
+   def logistic(self, z):
       return 1.0/(1.0+np.exp(-z))
       
    def extractBatch(self,  start_i, n_cases):
@@ -34,39 +34,39 @@ class RBM:
    
    def sampleBinary(self, probabilities):
       seed = np.sum(flattenMatrix(probabilities))
-      binary = 0 + (probabilities > randomize(self, probabilities.shape, seed))
+      binary = 0 + (probabilities > self.randomize(probabilities.shape, seed))
       return binary
      
    def visible_to_hiddenProbabilities(self, visible_data):
       term = np.dot(self.W, visible_data)
-      hiddenActivation = logistic(self, term)
+      hiddenActivation = self.logistic(term)
       return hiddenActivation
 
    def hidden_to_visibleProbabilities(self, hidden_activation):
       term = np.dot(self.W.T, hidden_activation)
-      visibleReconstruction = logistic(self, term)
+      visibleReconstruction = self.logistic(term)
       return visibleReconstruction
      
-   def configurationGradient(self, visibleState, hiddenState)
-      gradient = np.dot(visible_state, hidden_state.T)/(np.float32(visible_state.shape[1]));
+   def configurationGradient(self, visibleState, hiddenState):
+      gradient = np.dot(visibleState, hiddenState.T)/(np.float32(visibleState.shape[1]));
       return gradient
       
    def CDN(self, data, n):
-      inputData = data
+      visibleData = data
       for i in range(0, n):
-         visibleData = sampleBinary(self, visibleData)
-         hiddenProbabilities = visible_to_hiddenProbabilities(self, visible_data)
-         hiddenBinary = sampleBinary(self, hiddenProbabilities)
+         visibleData = self.sampleBinary(visibleData)
+         hiddenProbabilities = self.visible_to_hiddenProbabilities(visibleData)
+         hiddenBinary = self.sampleBinary(hiddenProbabilities)
          if not i:
-            gradient1 = configurationGradient(self, visibleData, hiddenBinary)
-         visibleProbabilities = hidden_to_visibleProbabilities(self, hiddenBinary)
-         visibleBinary = sampleBinary(self, visibleProbabilities)
-         hiddenProbabilities = visible_to_hiddenProbabilities(self, visibleBinary)
+            gradient1 = self.configurationGradient(visibleData, hiddenBinary)
+         visibleProbabilities = self.hidden_to_visibleProbabilities(hiddenBinary)
+         visibleBinary = self.sampleBinary(visibleProbabilities)
+         hiddenProbabilities = self.visible_to_hiddenProbabilities(visibleBinary)
          if i == n-1:
-            gradient2 = configurationGradient(self, visibleBinary, hiddenProbabilties)
+            gradient2 = self.configurationGradient(visibleBinary, hiddenProbabilities)
             break
-         hiddenBinary = sampleBinary(self, hiddenProbabilities)
-         visibleData = hidden_to_visibleProbabilities(self, hiddenBinary)
+         hiddenBinary = self.sampleBinary(hiddenProbabilities)
+         visibleData = self.hidden_to_visibleProbabilities(hiddenBinary)
       gradient = gradient1 - gradient2
       return gradient.T
       
@@ -77,16 +77,15 @@ class RBM:
       for iteration_number in range(0, n_iterations+1):
           clear()
           print 'Iteration %d | Batch # %d\n' % (iteration_number, start_of_next_mini_batch)
-          mini_batch = extractBatch(self, start_of_next_mini_batch, mini_batch_size)
-          start_of_next_mini_batch = np.mod(start_of_next_mini_batch + mini_batch_size, training_data.shape[1])
-          gradient = CDN(self, model, mini_batch)
+          mini_batch = self.extractBatch(start_of_next_mini_batch, mini_batch_size)
+          start_of_next_mini_batch = np.mod(start_of_next_mini_batch + mini_batch_size, self.inputs.shape[1])
+          gradient = self.CDN(mini_batch, n)
           momentum_speed = 0.9 * momentum_speed + gradient
           self.W = self.W + momentum_speed * learning_rate
-      return model
       
    def train(self, learning_rate, iterations, n):
       model_shape = (self.hiddenSize, self.visibleSize)
-      optimize(self, model_shape, learning_rate, iterations, n)
+      self.optimize(model_shape, learning_rate, iterations, n)
       
          
           
