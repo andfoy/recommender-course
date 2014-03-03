@@ -1,4 +1,4 @@
-import RBM
+import rbm
 import scipy
 import cpickle
 import numpy as np
