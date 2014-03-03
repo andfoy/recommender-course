@@ -16,6 +16,10 @@ class RBM:
    def logistic(z):
       return 1.0/(1.0+np.exp(-z))
       
+   def extractBatch(self,  start_i, n_cases):
+      minibatch = self.inputs[:, start_i : start_i + n_cases]
+      return minibatch
+      
    def randomize(self, size, seed):
       start_i = np.mod(np.round(seed), np.round(randomness_source.shape[1] / 10)) + 1
       if start_i + np.prod(size) >= randomness_source.shape[1] + 1:
@@ -43,14 +47,29 @@ class RBM:
       gradient = np.dot(visible_state, hidden_state.T)/(np.float32(visible_state.shape[1]));
       return gradient
       
-   def CDN(self, n):
-      inputData = self.inputs
+   def CDN(self, data, n):
+      inputData = data
       for i in range(0, n):
          visibleData = sampleBinary(self, visibleData)
          hiddenProbabilities = visible_to_hiddenProbabilities(self, visible_data)
          hiddenBinary = sampleBinary(self, hiddenProbabilities)
          if not i:
             gradient1 = configurationGradient(self, visibleData, hiddenBinary)
-         gradient1N = configurationGradient(self, visibleData, hiddenBinary)
+         visibleProbabilities = hidden_to_visibleProbabilities(self, hiddenBinary)
+         visibleBinary = sampleBinary(self, visibleProbabilities)
+         hiddenProbabilities = visible_to_hiddenProbabilities(self, visibleBinary)
+         if i == n-1:
+            gradient2 = configurationGradient(self, visibleBinary, hiddenProbabilties)
+            break
+         hiddenBinary = sampleBinary(self, hiddenProbabilities)
+         visibleData = hidden_to_visibleProbabilities(self, hiddenBinary)
+      gradient = gradient1 - gradient2
+      return gradient.T
+      
+   def optimize 
          
+         
+         
+         
+          
             
