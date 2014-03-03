@@ -1,4 +1,4 @@
-import rbm
+import RBM
 import scipy
 import cpickle
 import numpy as np
@@ -54,3 +54,4 @@ for i in user.keys():
    W_U = W[moviesRat, :]
    labels = np.zeros((K, len(moviesRat)))
    labels[ratings, moviesRat] = 1
+   rbm = RBM()
